@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Wire — Incoming | Grade 11 History</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{
+  --bg:#08090C;--card:#0F1116;--border:#1A1D25;--border2:#252830;
+  --dim:#484C58;--mid:#7A8090;--light:#B0B8C8;--bright:#E0E4EC;--white:#F8F9FB;
+  --red:#E84050;--red-bg:rgba(232,64,80,.08);
+  --green:#38C878;--green-bg:rgba(56,200,120,.08);
+  --blue:#4888E8;--blue-bg:rgba(72,136,232,.08);
+  --amber:#E8A838;--amber-bg:rgba(232,168,56,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{min-height:100vh;background:var(--bg);color:var(--light);font-family:'Source Sans 3',sans-serif;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 6px);pointer-events:none;z-index:999;}
+.c{max-width:640px;margin:0 auto;padding:1rem;min-height:100vh;display:flex;flex-direction:column;}
+.mono{font-family:'JetBrains Mono',monospace;}
+
+/* === INTRO === */
+.intro{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2rem 0;}
+.intro-tag{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--red);margin-bottom:1.5rem;animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+.intro-line{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.3rem,4vw,1.8rem);color:var(--white);line-height:1.5;margin-bottom:.8rem;opacity:0;transform:translateY(10px);animation:lineIn .5s ease forwards;}
+@keyframes lineIn{to{opacity:1;transform:translateY(0);}}
+.intro-sub{font-size:.9rem;color:var(--mid);margin-top:1.5rem;opacity:0;animation:lineIn .5s ease 3.5s forwards;}
+.intro-start{margin-top:2rem;opacity:0;animation:lineIn .5s ease 4s forwards;}
+
+/* === HUD === */
+.hud{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,9,12,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:.5rem 1rem;}
+.hud-inner{max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+.hud-left{display:flex;align-items:center;gap:.8rem;}
+.hud-rank{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red);}
+.hud-xp-wrap{width:100px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.hud-xp-bar{height:100%;background:var(--red);border-radius:2px;transition:width .5s ease;}
+.hud-right{display:flex;align-items:center;gap:.8rem;}
+.hud-streak{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--dim);}
+.hud-streak.hot{color:var(--amber);}.hud-streak.fire{color:var(--red);animation:pulse .4s ease;}
+@keyframes pulse{50%{transform:scale(1.3);}}
+.hud-xp{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--dim);}
+.xp-pop{position:fixed;top:40%;left:50%;transform:translate(-50%,0);font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:600;color:var(--green);pointer-events:none;z-index:200;animation:xpUp 1s ease-out forwards;}
+@keyframes xpUp{0%{opacity:1;transform:translate(-50%,0) scale(.8);}60%{opacity:1;transform:translate(-50%,-30px) scale(1.1);}100%{opacity:0;transform:translate(-50%,-50px) scale(.9);}}
+.lvl-up{position:fixed;inset:0;background:rgba(8,9,12,.92);display:flex;align-items:center;justify-content:center;z-index:300;animation:fadeIn .3s ease;}
+.lvl-inner{text-align:center;animation:scaleIn .5s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes scaleIn{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+/* === CONTENT CHUNK === */
+.chunk{padding-top:2.5rem;}
+.chunk-progress{display:flex;gap:.3rem;margin-bottom:1.2rem;}
+.chunk-dot{flex:1;height:3px;background:var(--border);border-radius:2px;}
+.chunk-dot.done{background:var(--green);}.chunk-dot.active{background:var(--red);animation:dotPulse 1s ease infinite;}
+.chunk-dot.upcoming{background:var(--border);}
+@keyframes dotPulse{50%{opacity:.5;}}
+
+.chunk-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);margin-bottom:.8rem;}
+
+/* Content card */
+.cc-card{background:var(--card);border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem;}
+.cc-card p{font-size:.92rem;line-height:1.75;color:var(--light);}
+.cc-card p+p{margin-top:.6rem;}
+.cc-card strong{color:var(--white);font-weight:600;}
+.cc-card em{color:var(--bright);}
+
+/* Pull quote variant */
+.cc-pq{text-align:center;padding:1.5rem 1rem;margin-bottom:1rem;}
+.cc-pq-text{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.4rem,4vw,1.9rem);color:var(--white);line-height:1.3;font-style:italic;}
+.cc-pq-sub{font-size:.8rem;color:var(--dim);margin-top:.5rem;}
+
+/* Compare */
+.cc-cmp{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);margin-bottom:1rem;overflow:hidden;}
+.cc-cmp-col{padding:1rem;}
+.cc-cmp-col:first-child{background:rgba(72,136,232,.04);border-right:1px solid var(--border);}
+.cc-cmp-col:last-child{background:rgba(232,64,80,.04);}
+.cc-cmp-flag{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.4rem;}
+.cc-cmp-col:first-child .cc-cmp-flag{color:var(--blue);}
+.cc-cmp-col:last-child .cc-cmp-flag{color:var(--red);}
+.cc-cmp-h{font-family:'DM Serif Display',Georgia,serif;font-size:1rem;color:var(--white);margin-bottom:.3rem;}
+.cc-cmp-col p{font-size:.75rem;line-height:1.5;color:var(--mid);margin-bottom:.15rem;}
+@media(max-width:420px){.cc-cmp{grid-template-columns:1fr;}.cc-cmp-col:first-child{border-right:none;border-bottom:1px solid var(--border);}}
+
+/* Key terms strip */
+.cc-terms{display:flex;flex-wrap:wrap;gap:.25rem;margin-bottom:1rem;}
+.cc-term{background:var(--card);border:1px solid var(--border);padding:.15rem .4rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--red);}
+
+/* Ready prompt */
+.ready-btn{display:block;width:100%;padding:1rem;background:var(--card);border:1px solid var(--border2);color:var(--mid);font-family:'JetBrains Mono',monospace;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-align:center;}
+.ready-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+
+/* === CHALLENGE === */
+.ch-timer{height:4px;background:var(--border);margin-bottom:1.2rem;border-radius:2px;overflow:hidden;}
+.ch-timer-bar{height:100%;border-radius:2px;transition:width .2s linear;}
+.ch-timer-bar.ok{background:var(--green);}.ch-timer-bar.warn{background:var(--amber);}.ch-timer-bar.crit{background:var(--red);animation:tFlash .4s ease infinite;}
+@keyframes tFlash{50%{opacity:.4;}}
+.ch-tag{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;}
+.ch-tag-timer{color:var(--dim);}
+.ch-statement{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(1.1rem,3vw,1.4rem);color:var(--white);line-height:1.5;text-align:center;padding:1rem .5rem;min-height:3.5rem;display:flex;align-items:center;justify-content:center;}
+.ch-btns{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:1rem;}
+.ch-btn{padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:2px solid var(--border2);background:var(--card);color:var(--light);cursor:pointer;transition:all .15s;}
+.ch-btn:active{transform:scale(.97);}
+.ch-btn.true-btn:hover{border-color:var(--green);color:var(--green);background:var(--green-bg);}
+.ch-btn.false-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-bg);}
+.ch-btn.correct{border-color:var(--green);background:var(--green-bg);color:var(--green);}
+.ch-btn.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red);}
+.ch-btn.off{pointer-events:none;opacity:.3;}
+.ch-fb{padding:.8rem 1rem;margin-top:.8rem;font-size:.85rem;line-height:1.6;border-left:2px solid var(--border);}
+.ch-fb.ok{border-left-color:var(--green);color:var(--light);}
+.ch-fb.nope{border-left-color:var(--red);color:var(--light);}
+.ch-fb strong{color:var(--white);}
+.ch-next{text-align:center;margin-top:1rem;}
+
+/* === FINAL Q === */
+.fq{background:var(--card);border:1px solid var(--border);padding:1.2rem;margin-top:1rem;}
+.fq-badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;padding:.2rem .5rem;background:var(--blue-bg);color:var(--blue);margin-bottom:.6rem;}
+.fq-q{font-family:'DM Serif Display',Georgia,serif;font-size:1.05rem;color:var(--white);line-height:1.5;margin-bottom:.8rem;}
+.fq-timer{display:flex;align-items:center;gap:.5rem;margin-bottom:.8rem;}
+.fq-timer-bg{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.fq-timer-bar{height:100%;border-radius:3px;transition:width .25s linear;}
+.fq-timer-bar.ok{background:var(--green);}.fq-timer-bar.warn{background:var(--amber);}.fq-timer-bar.crit{background:var(--red);animation:tFlash .4s ease infinite;}
+.fq-timer-num{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--mid);min-width:2rem;text-align:right;}
+.fq-opt{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--border);color:var(--light);padding:.7rem .8rem .7rem 2.2rem;margin-bottom:.35rem;font-size:.84rem;line-height:1.5;cursor:pointer;transition:all .2s;position:relative;}
+.fq-opt::before{content:attr(data-l);position:absolute;left:.7rem;top:50%;transform:translateY(-50%);font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--dim);font-weight:600;}
+.fq-opt:hover:not(.lk){border-color:var(--blue);color:var(--white);}
+.fq-opt.sel{border-color:var(--blue);background:var(--blue-bg);color:var(--white);}
+.fq-opt.cr{border-color:var(--green);background:var(--green-bg);color:var(--white);}
+.fq-opt.cr::after{content:'✓';position:absolute;right:.7rem;top:50%;transform:translateY(-50%);color:var(--green);}
+.fq-opt.wr{border-color:var(--red);background:var(--red-bg);color:var(--dim);text-decoration:line-through;}
+.fq-opt.lk{cursor:default;}
+.fq-fb{background:var(--bg);border:1px solid var(--border);padding:.9rem;margin-top:.7rem;}
+.fq-fb-v{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.3rem;}
+.fq-fb-v.c{color:var(--green);}.fq-fb-v.w{color:var(--red);}
+.fq-fb p{font-size:.84rem;line-height:1.7;color:var(--light);}
+.fq-fb strong{color:var(--white);}
+.fq-tip{margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--border);font-size:.76rem;color:var(--amber);font-style:italic;}
+.fq-tip::before{content:'⚡ EXAM TIP: ';font-style:normal;font-weight:600;}
+
+/* === BUTTONS === */
+.btn-p{display:inline-block;background:var(--red);color:var(--white);padding:.8rem 2rem;font-family:'Source Sans 3',sans-serif;font-size:.95rem;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:all .2s;}
+.btn-p:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.btn-p:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-s{display:inline-block;background:transparent;color:var(--dim);border:1px solid var(--border);padding:.6rem 1.2rem;font-family:'Source Sans 3',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.btn-s:hover{color:var(--light);border-color:var(--dim);}
+
+/* === END === */
+.end-wrap{padding-top:2.5rem;text-align:center;}
+.end-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:1.2rem 0;}
+.end-sc{background:var(--card);border:1px solid var(--border);padding:.8rem .4rem;text-align:center;}
+.end-sc-num{font-family:'DM Serif Display',Georgia,serif;font-size:1.8rem;color:var(--white);}
+.end-sc-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-top:.2rem;}
+
+@media(max-width:500px){.c{padding:.7rem;}}
+</style>
+</head>
+<body>
+<div id="hud-el"></div>
+<div class="c" id="app"></div>
+<script>
+var LVLS=[
+  {name:'RECRUIT',xp:0},{name:'ANALYST',xp:40},{name:'AGENT',xp:100},{name:'OPERATIVE',xp:180},{name:'DIRECTOR',xp:280}
+];
+var params=new URLSearchParams(window.location.search);
+var xp=parseInt(params.get('xp'))||0,streak=parseInt(params.get('streak'))||0,bestStreak=streak,lvl=parseInt(params.get('lvl'))||0,lvlShown=lvl;
+var app=document.getElementById('app'),hudEl=document.getElementById('hud-el');
+
+// === SEQUENCE: content chunk → challenge pairs ===
+var SEQ=[
+  // 0: content — what was the Cold War
+  {type:'content',label:'INTEL BRIEFING · 1/5',body:'<p>The Cold War was an ideological, political and economic rivalry between the <strong>capitalist United States</strong> and the <strong>communist Soviet Union</strong> that lasted from <strong>1947 to 1991</strong> — forty-four years.</p><p>It was called "cold" because the two superpowers <strong>never fought each other directly</strong>. Nuclear weapons made that too dangerous. Instead, they competed through <strong>propaganda, espionage, proxy wars, arms races</strong>, and the manipulation of smaller countries.</p>',terms:['ideology','proxy war','propaganda','arms race']},
+  // 1: challenge — MCQ
+  {type:'challenge',time:15,question:'Which of these was <strong style="color:var(--red)">NOT</strong> a way the Cold War was fought?',
+   options:['Proxy wars in other countries','Direct military invasion of each other\'s territory','Espionage and intelligence operations','Propaganda and media manipulation'],
+   correct:1,
+   feedback:'The Cold War was fought through proxy wars (Korea, Vietnam, Angola), espionage (CIA vs KGB), and propaganda — but <strong>never through direct military conflict between the USA and USSR</strong>. That\'s what made it "cold." Nuclear weapons made direct invasion suicidal.',
+   wrongFeedback:'Re-read the briefing: the USA and USSR competed through proxy wars, espionage, and propaganda — but the one thing they never did was <strong>fight each other directly</strong>. Nuclear weapons prevented that.'},
+
+  // 2: content — they were allies
+  {type:'content',label:'INTEL BRIEFING · 2/5',pq:{text:'They were allies.',sub:'The USA and USSR fought on the same side in WWII. Most people forget that.'},body:'<p>The USA and USSR needed each other to defeat Hitler. But their alliance was a <strong>"marriage of convenience"</strong> — they agreed on one thing (stop Nazi Germany) and disagreed on almost everything else. Each believed the other\'s system was not just wrong, but <strong>dangerous</strong>.</p>'},
+  // 3: challenge — MCQ
+  {type:'challenge',time:15,question:'Why do historians describe the USA-USSR wartime alliance as a "marriage of convenience"?',
+   options:['Because both countries had identical political systems and naturally cooperated','Because they needed each other to defeat Germany, but disagreed on almost everything else — their alliance was built on necessity, not shared values','Because Roosevelt and Stalin were personal friends who chose to work together','Because Britain forced the two countries into an alliance against their will'],
+   correct:1,
+   feedback:'A "marriage of convenience" means a partnership based on <strong>practical necessity, not genuine compatibility</strong>. They agreed on defeating Hitler — and almost nothing else. One was capitalist and democratic, the other communist and authoritarian.',
+   wrongFeedback:'The key phrase is "marriage of convenience" — it means a partnership based on <strong>necessity, not shared beliefs</strong>. They needed each other against Hitler, but their systems were fundamentally opposed.'},
+
+  // 4: content — capitalism vs communism
+  {type:'content',label:'INTEL BRIEFING · 3/5',body:'<p>The core divide: <strong>two incompatible systems</strong> for organising society.</p>',
+   cmp:{left:{flag:'USA · CAPITALISM',h:'Freedom',pts:['Private ownership','Free markets','Multi-party democracy','Individual rights']},right:{flag:'USSR · COMMUNISM',h:'Equality',pts:['State ownership','Planned economy','One-party state','Collective rights']}}},
+  // 5: challenge — MATCH type
+  {type:'match',time:20,question:'Which system does each statement belong to?',
+   items:[
+    {text:'The state owns all major industries',answer:'USSR'},
+    {text:'Multiple political parties compete in elections',answer:'USA'},
+    {text:'The economy is centrally planned by the government',answer:'USSR'},
+    {text:'Individuals have the right to own property and businesses',answer:'USA'}
+   ],
+   feedback:'The core tension: capitalism builds society around <strong>individual freedom and private ownership</strong>. Communism builds it around <strong>collective equality and state control</strong>. These aren\'t just different preferences — they\'re incompatible foundations for how a country should work.'},
+
+  // 6: content — global reach + Africa
+  {type:'content',label:'INTEL BRIEFING · 4/5',body:'<p>The Cold War didn\'t stay in Europe. It <strong>reshaped the entire world</strong>. Proxy wars erupted in Korea, Vietnam, Angola, Mozambique, and Afghanistan.</p><p>In southern Africa, the Cold War <strong>directly shaped liberation struggles</strong>. The apartheid government positioned itself as a Western ally against communism. The ANC received support from the Soviet Union. The Cold War framework was used to justify oppression and resistance alike. <strong>It shaped your country\'s history.</strong></p>'},
+  // 7: challenge — MCQ
+  {type:'challenge',time:15,question:'How did the Cold War specifically affect South Africa?',
+   options:['South Africa remained completely neutral and was unaffected by Cold War politics','The apartheid government aligned with the West as anti-communist, while the ANC received Soviet support — the Cold War framework shaped both sides of the struggle','The USSR invaded South Africa to install a communist government','South Africa joined the Warsaw Pact and became a Soviet ally'],
+   correct:1,
+   feedback:'The apartheid government used anti-communism to justify its rule and gain Western support. The ANC, branded as communist, received Soviet backing. <strong>The Cold War didn\'t just happen elsewhere — it ran through South Africa\'s own liberation struggle.</strong>',
+   wrongFeedback:'Go back to the briefing: the apartheid state positioned itself as <strong>anti-communist to gain Western support</strong>, while the ANC received <strong>Soviet backing</strong>. Cold War politics shaped both sides of the South African struggle.'},
+
+  // 8: content — nuclear weapons / MAD
+  {type:'content',label:'INTEL BRIEFING · 5/5',body:'<p>At its peak, the two sides possessed over <strong>60,000 nuclear warheads</strong> — enough to destroy the world many times over. This created a paradox: the weapons were too destructive to use, which meant they actually <strong>prevented</strong> direct war.</p><p>This concept — <strong>Mutually Assured Destruction (MAD)</strong> — meant that attacking the other side guaranteed your own annihilation. So the conflict stayed "cold" between the superpowers, even as it burned hot across the rest of the world.</p>',terms:['MAD','nuclear deterrence','superpower']},
+  // 9: challenge — MCQ
+  {type:'challenge',time:15,question:'Why did Mutually Assured Destruction (MAD) paradoxically <em>prevent</em> war between the superpowers?',
+   options:['Because both sides agreed to a formal treaty promising never to use nuclear weapons','Because attacking the other side meant guaranteeing your own destruction in a retaliatory strike — making first use suicidal','Because nuclear weapons were too expensive to maintain, so both sides gradually disarmed','Because the United Nations banned the use of nuclear weapons in international law'],
+   correct:1,
+   feedback:'There was no treaty, no ban, no disarmament. The logic was grimmer: <strong>if you attack, you will be destroyed in return</strong>. Both sides knew this. So neither attacked. The most destructive weapons ever built became, paradoxically, the reason the superpowers never fought directly.',
+   wrongFeedback:'MAD wasn\'t about treaties or bans — it was about <strong>cold logic</strong>. If you launch first, the other side launches back. Both are annihilated. So neither launches. The weapons that could end the world are what stopped the superpowers from using them.'},
+
+  // 10: FINAL Q
+  {type:'finalq'}
+];
+
+var FQ={
+  question:'A historian writes: "The Cold War was not really a war at all — it was a competition." How would you evaluate this claim?',
+  options:[
+    'Agree — since they never fought directly, it was more like a rivalry than a real conflict',
+    'Partly agree — no direct superpower war, but proxy wars killed millions and the nuclear threat affected everyone, so "competition" understates the human cost',
+    'Disagree — the Cold War involved constant direct military conflict between the USA and USSR',
+    'Disagree — the Cold War was entirely about nuclear weapons and had no other dimensions'
+  ],
+  correct:1,
+  feedback:'Option A drastically understates the impact — proxy wars killed <strong>millions</strong>. Option C is factually wrong — they never fought directly. Option D ignores propaganda, espionage, economic warfare. <strong>The strongest answer sees what\'s right AND wrong in the claim.</strong>',
+  tip:'This is an "evaluate" question — the highest level. The exam rewards you for seeing complexity, not just agreeing or disagreeing.'
+};
+
+var pos=0,answers={},fqSel=null,fqDone=false,timer=null,fqTimer=null;
+
+function render(){
+  clearInterval(timer);clearInterval(fqTimer);
+  window.scrollTo({top:0,behavior:'auto'});
+  var d=SEQ[pos];
+  if(!d){renderEnd();return;}
+  if(d.type==='content') renderContent(d);
+  else if(d.type==='challenge') renderChallenge(d);
+  else if(d.type==='match') renderMatch(d);
+  else if(d.type==='finalq') renderFinalQ();
+  renderHUD();
+}
+
+// === HUD ===
+function renderHUD(){
+  if(pos===0&&!answers[0]){hudEl.innerHTML='';return;} // hide on first content
+  var lv=LVLS[lvl],nxt=LVLS[lvl+1];
+  var pct=nxt?Math.min(100,((xp-lv.xp)/(nxt.xp-lv.xp))*100):100;
+  var sk=streak,skCl=sk>=5?'fire':sk>=3?'hot':'';
+  var skTxt=sk>=3?'🔥'.repeat(Math.min(sk,5))+' '+sk:sk>0?'🔥 '+sk:'';
+  hudEl.innerHTML='<div class="hud"><div class="hud-inner"><div class="hud-left"><span class="hud-rank">'+lv.name+'</span><div class="hud-xp-wrap"><div class="hud-xp-bar" style="width:'+pct+'%"></div></div></div><div class="hud-right">'+(skTxt?'<span class="hud-streak '+skCl+'">'+skTxt+'</span>':'')+' <span class="hud-xp">'+xp+' XP</span></div></div></div>';
+}
+function addXP(n){
+  xp+=n;var nl=0;for(var i=LVLS.length-1;i>=0;i--){if(xp>=LVLS[i].xp){nl=i;break;}}
+  if(nl>lvl)lvl=nl;
+  var el=document.createElement('div');el.className='xp-pop';el.textContent='+'+n+' XP';document.body.appendChild(el);setTimeout(function(){el.remove();},1100);
+  if(lvl>lvlShown){lvlShown=lvl;var lv=LVLS[lvl];var o=document.createElement('div');o.className='lvl-up';o.innerHTML='<div class="lvl-inner"><div style="font-family:\'JetBrains Mono\',monospace;font-size:.6rem;letter-spacing:.3em;color:var(--dim);">CLEARANCE UPGRADED</div><div style="font-family:\'DM Serif Display\',Georgia,serif;font-size:2.5rem;color:var(--red);margin:.3rem 0;">'+lv.name+'</div><button class="btn-p" onclick="this.closest(\'.lvl-up\').remove()">Continue</button></div>';document.body.appendChild(o);}
+  renderHUD();
+}
+
+// === PROGRESS DOTS ===
+function dots(){
+  var totalPairs=5;
+  var currentPair=Math.floor(pos/2);
+  var h='<div class="chunk-progress">';
+  for(var i=0;i<totalPairs;i++){
+    var cl=i<currentPair?'done':i===currentPair?'active':'upcoming';
+    h+='<div class="chunk-dot '+cl+'"></div>';
+  }
+  // Add final Q dot
+  h+='<div class="chunk-dot '+(pos>=10?'active':pos>10?'done':'upcoming')+'"></div>';
+  return h+'</div>';
+}
+
+// === CONTENT ===
+function renderContent(d){
+  var h='<div class="chunk">'+dots();
+  h+='<div class="chunk-label">'+d.label+'</div>';
+  if(d.pq) h+='<div class="cc-pq"><div class="cc-pq-text">'+d.pq.text+'</div><div class="cc-pq-sub">'+d.pq.sub+'</div></div>';
+  if(d.body) h+='<div class="cc-card">'+d.body+'</div>';
+  if(d.cmp){
+    var c=d.cmp;
+    h+='<div class="cc-cmp"><div class="cc-cmp-col"><div class="cc-cmp-flag">'+c.left.flag+'</div><div class="cc-cmp-h">'+c.left.h+'</div>';
+    c.left.pts.forEach(function(p){h+='<p>→ '+p+'</p>';});
+    h+='</div><div class="cc-cmp-col"><div class="cc-cmp-flag">'+c.right.flag+'</div><div class="cc-cmp-h">'+c.right.h+'</div>';
+    c.right.pts.forEach(function(p){h+='<p>→ '+p+'</p>';});
+    h+='</div></div>';
+  }
+  if(d.terms){
+    h+='<div class="cc-terms">';d.terms.forEach(function(t){h+='<span class="cc-term">'+t+'</span>';});h+='</div>';
+  }
+  h+='<button class="ready-btn" onclick="pos++;render();">I\'ve read this — test me ▶</button>';
+  h+='</div>';
+  app.innerHTML=h;
+}
+
+// === CHALLENGE (MCQ) ===
+function renderChallenge(d){
+  var a=answers[pos];
+  var h='<div class="chunk">'+dots();
+  h+='<div class="ch-tag"><span>⚡ CHALLENGE</span><span class="ch-tag-timer">'+d.time+'s</span></div>';
+  if(!a) h+='<div class="ch-timer"><div class="ch-timer-bar ok" id="chBar" style="width:100%"></div></div>';
+  h+='<div class="ch-statement" style="text-align:left;font-size:1rem;padding:.5rem 0;">'+d.question+'</div>';
+  var LL=['A','B','C','D'];
+  if(!a){
+    h+='<div style="margin-top:.6rem;">';
+    d.options.forEach(function(o,i){
+      var sel=answers['tmp_'+pos]===i?' sel':'';
+      h+='<button class="fq-opt'+sel+'" data-l="'+LL[i]+'" onclick="chSel('+i+')">'+o+'</button>';
+    });
+    h+='</div><div style="margin-top:.6rem;"><button class="btn-p" onclick="chSubmit()" '+(answers['tmp_'+pos]===undefined?'disabled':'')+' style="padding:.6rem 1.5rem;font-size:.85rem;">Submit</button></div>';
+  } else {
+    h+='<div style="margin-top:.6rem;">';
+    d.options.forEach(function(o,i){
+      var cl='fq-opt lk';
+      if(i===d.correct)cl+=' cr';
+      else if(a.sel===i&&!a.ok)cl+=' wr';
+      h+='<button class="'+cl+'" data-l="'+LL[i]+'">'+o+'</button>';
+    });
+    h+='</div>';
+    var fbCl=a.ok?'ok':'nope';
+    var fbText=a.timedOut?'⏱ Time\'s up! '+d.feedback:(a.ok?d.feedback:d.wrongFeedback);
+    h+='<div class="ch-fb '+fbCl+'">'+fbText+'</div>';
+    h+='<div class="ch-next"><button class="btn-p" onclick="pos++;render();" style="padding:.7rem 1.8rem;font-size:.9rem;">Continue →</button></div>';
+  }
+  h+='</div>';
+  app.innerHTML=h;
+  if(!a) startChTimer(d.time);
+}
+function chSel(i){answers['tmp_'+pos]=i;render();}
+function chSubmit(){
+  var sel=answers['tmp_'+pos];if(sel===undefined)return;
+  clearInterval(timer);
+  var d=SEQ[pos],ok=sel===d.correct;
+  answers[pos]={sel:sel,ok:ok,timedOut:false};
+  delete answers['tmp_'+pos];
+  if(ok){streak++;if(streak>bestStreak)bestStreak=streak;addXP(10);}else{streak=0;}
+  render();
+}
+function startChTimer(secs){
+  var timeLeft=secs;
+  timer=setInterval(function(){
+    timeLeft--;
+    var bar=document.getElementById('chBar');
+    if(bar){var pct=(timeLeft/secs)*100;bar.style.width=pct+'%';bar.className='ch-timer-bar'+(pct<25?' crit':pct<50?' warn':' ok');}
+    if(timeLeft<=0){clearInterval(timer);answers[pos]={sel:-1,ok:false,timedOut:true};streak=0;render();}
+  },1000);
+}
+
+// === MATCH ===
+function renderMatch(d){
+  var a=answers[pos];
+  var h='<div class="chunk">'+dots();
+  h+='<div class="ch-tag"><span>⚡ MATCH</span><span class="ch-tag-timer">'+d.time+'s</span></div>';
+  if(!a) h+='<div class="ch-timer"><div class="ch-timer-bar ok" id="chBar" style="width:100%"></div></div>';
+  h+='<div style="font-size:.92rem;color:var(--white);margin-bottom:.8rem;">'+d.question+'</div>';
+
+  if(!a){
+    var picks=answers['match_'+pos]||{};
+    d.items.forEach(function(item,i){
+      var picked=picks[i];
+      h+='<div style="background:var(--card);border:1px solid var(--border);padding:.7rem .9rem;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;">';
+      h+='<span style="font-size:.84rem;color:var(--light);flex:1;">'+item.text+'</span>';
+      h+='<div style="display:flex;gap:.3rem;">';
+      h+='<button style="padding:.3rem .7rem;font-family:\'JetBrains Mono\',monospace;font-size:.65rem;border:1px solid '+(picked==='USA'?'var(--blue)':'var(--border)')+';background:'+(picked==='USA'?'var(--blue-bg)':'var(--card)')+';color:'+(picked==='USA'?'var(--blue)':'var(--dim)')+';cursor:pointer;" onclick="matchPick('+i+',\'USA\')">USA</button>';
+      h+='<button style="padding:.3rem .7rem;font-family:\'JetBrains Mono\',monospace;font-size:.65rem;border:1px solid '+(picked==='USSR'?'var(--red)':'var(--border)')+';background:'+(picked==='USSR'?'var(--red-bg)':'var(--card)')+';color:'+(picked==='USSR'?'var(--red)':'var(--dim)')+';cursor:pointer;" onclick="matchPick('+i+',\'USSR\')">USSR</button>';
+      h+='</div></div>';
+    });
+    var allPicked=Object.keys(picks).length===d.items.length;
+    h+='<div style="margin-top:.6rem;"><button class="btn-p" onclick="matchSubmit()" '+(allPicked?'':'disabled')+' style="padding:.6rem 1.5rem;font-size:.85rem;">Submit</button></div>';
+  } else {
+    d.items.forEach(function(item,i){
+      var pick=a.picks[i];
+      var correct=pick===item.answer;
+      var borderCol=correct?'var(--green)':'var(--red)';
+      h+='<div style="background:var(--card);border:1px solid '+borderCol+';padding:.7rem .9rem;margin-bottom:.4rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;">';
+      h+='<span style="font-size:.84rem;color:var(--light);flex:1;">'+item.text+'</span>';
+      h+='<span style="font-family:\'JetBrains Mono\',monospace;font-size:.65rem;color:'+(correct?'var(--green)':'var(--red)')+';">'+(correct?'✓ '+item.answer:'✗ '+pick+' → '+item.answer)+'</span>';
+      h+='</div>';
+    });
+    h+='<div class="ch-fb '+(a.ok?'ok':'nope')+'">'+d.feedback+'</div>';
+    h+='<div class="ch-next"><button class="btn-p" onclick="pos++;render();" style="padding:.7rem 1.8rem;font-size:.9rem;">Continue →</button></div>';
+  }
+  h+='</div>';
+  app.innerHTML=h;
+  if(!a) startChTimer(d.time);
+}
+function matchPick(i,val){
+  if(!answers['match_'+pos])answers['match_'+pos]={};
+  answers['match_'+pos][i]=val;
+  render();
+}
+function matchSubmit(){
+  clearInterval(timer);
+  var d=SEQ[pos];
+  var picks=answers['match_'+pos]||{};
+  var allCorrect=true;
+  d.items.forEach(function(item,i){if(picks[i]!==item.answer)allCorrect=false;});
+  var correctCount=0;d.items.forEach(function(item,i){if(picks[i]===item.answer)correctCount++;});
+  answers[pos]={picks:picks,ok:allCorrect,correctCount:correctCount,timedOut:false};
+  if(allCorrect){streak++;if(streak>bestStreak)bestStreak=streak;addXP(15);}
+  else if(correctCount>=3){addXP(8);}
+  else{streak=0;}
+  render();
+}
+
+// === FINAL Q ===
+function renderFinalQ(){
+  var h='<div class="chunk">'+dots();
+  h+='<div class="fq"><div class="fq-badge">EVALUATE · 30 SECONDS</div>';
+  if(!fqDone) h+='<div class="fq-timer"><div class="fq-timer-bg"><div class="fq-timer-bar ok" id="fqBar" style="width:100%"></div></div><span class="fq-timer-num" id="fqNum">30s</span></div>';
+  h+='<div class="fq-q">'+FQ.question+'</div>';
+  var LL=['A','B','C','D'];
+  FQ.options.forEach(function(o,i){
+    var cl='fq-opt';
+    if(fqDone){cl+=' lk';if(i===FQ.correct)cl+=' cr';else if(fqSel===i)cl+=' wr';}
+    else if(fqSel===i)cl+=' sel';
+    h+='<button class="'+cl+'" data-l="'+LL[i]+'" '+(fqDone?'':'onclick="fqSelect('+i+')"')+'>'+o+'</button>';
+  });
+  if(!fqDone) h+='<div style="margin-top:.7rem;"><button class="btn-p" onclick="fqSubmit()" '+(fqSel===null?'disabled':'')+' style="padding:.6rem 1.5rem;font-size:.85rem;">Submit</button></div>';
+  if(fqDone){
+    var ok=fqSel===FQ.correct;
+    h+='<div class="fq-fb"><div class="fq-fb-v '+(ok?'c':'w')+'">'+(ok?'✓ CORRECT':'✗ INCORRECT')+'</div><p>'+FQ.feedback+'</p><div class="fq-tip">'+FQ.tip+'</div></div>';
+    h+='<div style="text-align:center;margin-top:1rem;"><button class="btn-p" onclick="pos++;render();">See results →</button></div>';
+  }
+  h+='</div></div>';
+  app.innerHTML=h;
+  if(!fqDone){var tl=30;clearInterval(fqTimer);fqTimer=setInterval(function(){tl--;var b=document.getElementById('fqBar'),n=document.getElementById('fqNum');if(b&&n){var p=(tl/30)*100;b.style.width=p+'%';b.className='fq-timer-bar'+(p<25?' crit':p<50?' warn':' ok');n.textContent=tl+'s';}if(tl<=0){clearInterval(fqTimer);fqSel=-1;fqDone=true;streak=0;render();}},1000);}
+}
+function fqSelect(i){if(fqDone)return;fqSel=i;render();}
+function fqSubmit(){if(fqSel===null||fqDone)return;clearInterval(fqTimer);fqDone=true;var ok=fqSel===FQ.correct;if(ok){streak++;if(streak>bestStreak)bestStreak=streak;addXP(25);}else{streak=0;}render();}
+
+// === END ===
+function renderEnd(){
+  var correct=0,total=0;for(var k in answers){if(answers.hasOwnProperty(k)){total++;if(answers[k].ok)correct++;}}
+  if(fqDone){total++;if(fqSel===FQ.correct)correct++;}
+  var pct=total>0?Math.round(correct/total*100):0;
+  var lv=LVLS[lvl];
+  var nxt='?xp='+xp+'&streak='+streak+'&lvl='+lvl+'&best='+bestStreak;
+  app.innerHTML='<div class="end-wrap">'+
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;">Part 1 Complete</div>'+
+    '<div style="font-family:\'DM Serif Display\',Georgia,serif;font-size:2rem;color:var(--white);margin:.3rem 0;">'+lv.name+'</div>'+
+    '<div style="font-size:.8rem;color:var(--mid);">'+xp+' XP · Best streak: '+bestStreak+'🔥</div>'+
+    '<div class="end-scores"><div class="end-sc"><div class="end-sc-num">'+correct+'<span style="font-size:1rem;color:var(--dim);">/'+total+'</span></div><div class="end-sc-label">Correct</div></div><div class="end-sc"><div class="end-sc-num">'+pct+'<span style="font-size:1rem;color:var(--dim);">%</span></div><div class="end-sc-label">Accuracy</div></div><div class="end-sc"><div class="end-sc-num" style="font-size:1.2rem;">'+(pct>=75?'Strong':pct>=50?'Building':'Developing')+'</div><div class="end-sc-label">Level</div></div></div>'+
+    '<div style="max-width:400px;margin:1rem auto;font-size:.88rem;color:var(--mid);line-height:1.5;">You know what the Cold War was. Now find out how two enemies became allies — and why it couldn\'t last.</div>'+
+    '<a href="origins_2_alliance.html'+nxt+'" class="btn-p" style="margin-top:.5rem;">Next: The Alliance →</a><br>'+
+    '<button class="btn-s" onclick="restart()" style="margin-top:.8rem;">Restart Part 1</button></div>';
+  renderHUD();
+}
+
+function restart(){xp=parseInt(params.get('xp'))||0;streak=0;bestStreak=0;lvl=parseInt(params.get('lvl'))||0;lvlShown=lvl;pos=0;answers={};fqSel=null;fqDone=false;app.innerHTML='<div class="intro"><div class="intro-tag">INCOMING TRANSMISSION ▮</div><div class="intro-line" style="animation-delay:.3s">Two posts about the same event.</div><div class="intro-line" style="animation-delay:1s">One says heroic intervention.</div><div class="intro-line" style="animation-delay:1.8s">The other says invasion.</div><div class="intro-line" style="animation-delay:2.6s">Same footage. <span style="color:var(--red);">Different stories.</span></div><div class="intro-sub">You deal with this every day. Now imagine it with nuclear weapons.</div><div class="intro-start"><button class="btn-p" onclick="render()">Begin diagnostic →</button></div></div>';hudEl.innerHTML='';}
+
+// === INIT ===
+app.innerHTML='<div class="intro"><div class="intro-tag">INCOMING TRANSMISSION ▮</div><div class="intro-line" style="animation-delay:.3s">Two posts about the same event.</div><div class="intro-line" style="animation-delay:1s">One says heroic intervention.</div><div class="intro-line" style="animation-delay:1.8s">The other says invasion.</div><div class="intro-line" style="animation-delay:2.6s">Same footage. <span style="color:var(--red);">Different stories.</span></div><div class="intro-sub">You deal with this every day. Now imagine it with nuclear weapons.</div><div class="intro-start"><button class="btn-p" onclick="render()">Begin diagnostic →</button></div></div>';
+</script>
+</body>
+</html>
