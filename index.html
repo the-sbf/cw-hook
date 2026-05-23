@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#08090C">
 <title>The Wire — Incoming | Grade 11 History</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
@@ -158,6 +159,25 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 .end-sc-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-top:.2rem;}
 
 @media(max-width:500px){.c{padding:.7rem;}}
+
+/* === MOBILE OPTIMISATIONS === */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+*{-webkit-tap-highlight-color:transparent;}
+body{min-height:100dvh;padding-bottom:env(safe-area-inset-bottom);}
+button,a,.btn-p,.btn-s,.ready-btn,.fq-opt,.ch-btn,.cc-term{touch-action:manipulation;}
+.hud{padding-top:max(.5rem,env(safe-area-inset-top));padding-left:max(1rem,env(safe-area-inset-left));padding-right:max(1rem,env(safe-area-inset-right));}
+.chunk{padding-top:calc(2rem + env(safe-area-inset-top));}
+@media (hover:none){
+  .btn-p:hover,.btn-s:hover,.ready-btn:hover,.cc-term:hover,.ch-btn:hover,.fq-opt:hover{transform:none;filter:none;}
+}
+@media (max-width:500px){
+  .btn-p,.btn-s,.ready-btn,.ch-btn,.fq-opt,.cc-term{min-height:44px;}
+  .cc-term{display:inline-flex;align-items:center;padding:.55rem .8rem;font-size:.85rem;}
+  .ch-btn{font-size:1rem;padding:1.1rem;}
+  .fq-opt{font-size:1rem;padding:.9rem 1rem .9rem 2.5rem;}
+  .end-sc-label,.chunk-label,.hud-rank,.intro-tag,.fq-badge{font-size:.62rem;}
+  .hud-xp,.hud-streak{font-size:.72rem;}
+}
 </style>
 </head>
 <body>
